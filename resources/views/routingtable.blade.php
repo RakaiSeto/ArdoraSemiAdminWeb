@@ -64,8 +64,8 @@
                                 <h5 class="box-title">Routing Table</h5>
                             </div>
                             <div class="box-header pt-0 no-border">
-                                <p class="box-title">Please restart the service after you have finished making any changes</p>
-                                <a data-toggle="modal" class="edit btn btn-primary btn-sm text-white" data-target="#modalToggleRouting">restart service</a>
+                                <p class="box-title">Please reload the settings after you have finished making any changes</p>
+                                <a data-toggle="modal" class="edit btn btn-primary btn-sm text-white" data-target="#modalToggleRouting">reload settings</a>
                             </div>
 
 
@@ -107,7 +107,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="box-title">Restart Routing</h5>
+                    <h5 class="box-title">Reload Settings</h5>
                     <button type="button" class="close" data-dismiss="modal">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -117,7 +117,7 @@
                         {{ csrf_field() }}
                         <input type="hidden" id="tuClientId">
                         <div class="form-group row">
-                            <p for="tuClientName" class="text-center col-sm-12 col-form-label">To restart, please input "plsrestart" in the box</p>
+                            <p for="tuClientName" class="text-center col-sm-12 col-form-label">To reload, please input "plsreload" in the box</p>
                         </div>
 
                         <div class="form-group row">
@@ -153,7 +153,7 @@
             let togglePassword = $('#toggle-password').val()
             let btnToggle = $('#btnToggle')
 
-            if(togglePassword == "plsrestart") {
+            if(togglePassword == "plsreload") {
                 btnToggle.attr('disabled', false)
             } else {
                 btnToggle.attr('disabled', true)
