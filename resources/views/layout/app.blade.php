@@ -40,6 +40,7 @@
     <link rel="stylesheet" href="/assets/vendor_components/animate/animate.css">
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
 </head>
 
