@@ -94,25 +94,46 @@ class TransactionReportController extends Controller
                 $searchField = 'transaction_sms.msisdn';
             }
 
-            $data = DB::table('transaction_sms')
-                ->leftJoin('transaction_status', 'transaction_sms.status_code', '=', 'transaction_status.status_code')
-                ->leftJoin('client', 'transaction_sms.client_id', '=', 'client.client_id')
-                ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
-                ->leftJoin('country', 'transaction_sms.country_code', '=', 'country.country_id')
-                ->leftJoin('transaction_sms_vendor', 'transaction_sms_vendor.message_id', '=', 'transaction_sms.message_id')
-                ->leftJoin('telecom', 'transaction_sms.telecom_id', '=', 'telecom.telecom_id')
-                ->leftJoin('transaction_sms_financial', 'transaction_sms.message_id', '=', 'transaction_sms_financial.message_id')
-                ->where('transaction_sms.transaction_date', '>=', $startDate)
-                ->where('transaction_sms.transaction_date', '<=', $endDate)
-                ->where('client_to_reseller.reseller_id', '=', $request->session()->get('reseller_id'))
-                ->select(
-                    'transaction_sms.transaction_date', 'transaction_sms.batch_id', 'transaction_sms.message_id',
-                    'transaction_sms.client_sender_id', 'transaction_sms.msisdn', 'transaction_sms.message', 'transaction_status.description',
-                    'client.client_name', 'country.country_name', 'telecom.telecom_name', 'transaction_sms.message_encodng', 'transaction_sms.message_length',
-                    'transaction_sms.sms_count', 'transaction_sms_financial.previous_balance', 'transaction_sms.client_price_total', 'transaction_sms_financial.after_balance',
-                    'transaction_sms_vendor.vendor_id', 'transaction_sms_vendor.vendor_hit_date_time',
-                    'transaction_sms_vendor.vendor_hit_resp_date_time', 'transaction_sms_vendor.vendor_message_id',
-                    'transaction_sms_vendor.vendor_callback_date_time', 'transaction_sms_vendor.vendor_trx_status');
+            if ($request->session()->get('privilege') == 'ROOT') {
+                $data = DB::table('transaction_sms')
+                    ->leftJoin('transaction_status', 'transaction_sms.status_code', '=', 'transaction_status.status_code')
+                    ->leftJoin('client', 'transaction_sms.client_id', '=', 'client.client_id')
+                    ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
+                    ->leftJoin('country', 'transaction_sms.country_code', '=', 'country.country_id')
+                    ->leftJoin('transaction_sms_vendor', 'transaction_sms_vendor.message_id', '=', 'transaction_sms.message_id')
+                    ->leftJoin('telecom', 'transaction_sms.telecom_id', '=', 'telecom.telecom_id')
+                    ->leftJoin('transaction_sms_financial', 'transaction_sms.message_id', '=', 'transaction_sms_financial.message_id')
+                    ->where('transaction_sms.transaction_date', '>=', $startDate)
+                    ->where('transaction_sms.transaction_date', '<=', $endDate)
+                    ->select(
+                        'transaction_sms.transaction_date', 'transaction_sms.batch_id', 'transaction_sms.message_id',
+                        'transaction_sms.client_sender_id', 'transaction_sms.msisdn', 'transaction_sms.message', 'transaction_status.description',
+                        'client.client_name', 'country.country_name', 'telecom.telecom_name', 'transaction_sms.message_encodng', 'transaction_sms.message_length',
+                        'transaction_sms.sms_count', 'transaction_sms_financial.previous_balance', 'transaction_sms.client_price_total', 'transaction_sms_financial.after_balance',
+                        'transaction_sms_vendor.vendor_id', 'transaction_sms_vendor.vendor_hit_date_time',
+                        'transaction_sms_vendor.vendor_hit_resp_date_time', 'transaction_sms_vendor.vendor_message_id',
+                        'transaction_sms_vendor.vendor_callback_date_time', 'transaction_sms_vendor.vendor_trx_status');
+            } else {
+                $data = DB::table('transaction_sms')
+                    ->leftJoin('transaction_status', 'transaction_sms.status_code', '=', 'transaction_status.status_code')
+                    ->leftJoin('client', 'transaction_sms.client_id', '=', 'client.client_id')
+                    ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
+                    ->leftJoin('country', 'transaction_sms.country_code', '=', 'country.country_id')
+                    ->leftJoin('transaction_sms_vendor', 'transaction_sms_vendor.message_id', '=', 'transaction_sms.message_id')
+                    ->leftJoin('telecom', 'transaction_sms.telecom_id', '=', 'telecom.telecom_id')
+                    ->leftJoin('transaction_sms_financial', 'transaction_sms.message_id', '=', 'transaction_sms_financial.message_id')
+                    ->where('transaction_sms.transaction_date', '>=', $startDate)
+                    ->where('transaction_sms.transaction_date', '<=', $endDate)
+                    ->where('client_to_reseller.reseller_id', '=', $request->session()->get('reseller_id'))
+                    ->select(
+                        'transaction_sms.transaction_date', 'transaction_sms.batch_id', 'transaction_sms.message_id',
+                        'transaction_sms.client_sender_id', 'transaction_sms.msisdn', 'transaction_sms.message', 'transaction_status.description',
+                        'client.client_name', 'country.country_name', 'telecom.telecom_name', 'transaction_sms.message_encodng', 'transaction_sms.message_length',
+                        'transaction_sms.sms_count', 'transaction_sms_financial.previous_balance', 'transaction_sms.client_price_total', 'transaction_sms_financial.after_balance',
+                        'transaction_sms_vendor.vendor_id', 'transaction_sms_vendor.vendor_hit_date_time',
+                        'transaction_sms_vendor.vendor_hit_resp_date_time', 'transaction_sms_vendor.vendor_message_id',
+                        'transaction_sms_vendor.vendor_callback_date_time', 'transaction_sms_vendor.vendor_trx_status');
+            }
 
             if (strlen(trim($searchKeyword)) > 0) {
                 $data = $data->where($searchField, '=', $searchKeyword);
@@ -528,27 +549,46 @@ class TransactionReportController extends Controller
             //sum(tx.sms_count) as sms_count, sum(tx.client_price_total) as price_total, tx.status_code from transaction_sms as tx
             //left join client as cc on tx.client_id = cc.client_id where tx.transaction_date >= '".$startDate."' and tx.transaction_date <= '".$endDate.
             //"' and cc.client_group_id = '".$clientGroupId."' group by day, tx.client_id, cc.client_name, tx.status_code order by day desc");
-
-            $dataSummary = DB::select("select date_trunc('day', tx.transaction_date) as day, tx.client_id, cc.client_name, sum(tx.sms_count) as sms_count,
+            if ($request->session()->get('privilege') == 'ROOT') {
+                $dataSummary = DB::select("select date_trunc('day', tx.transaction_date) as day, tx.client_id, cc.client_name, sum(tx.sms_count) as sms_count,
+            sum(tx.client_price_total) as price_total, st.description as status_name from transaction_sms as tx
+            left join client as cc on tx.client_id = cc.client_id
+            left join client_to_reseller as cr on cr.client_id = cc.client_id
+            left join transaction_status as st on tx.status_code = st.status_code
+            where tx.transaction_date >= '".$startDate."' and tx.transaction_date <= '".$endDate."'
+            group by day, tx.client_id, cc.client_name, st.description order by day desc");
+            } else {
+                $dataSummary = DB::select("select date_trunc('day', tx.transaction_date) as day, tx.client_id, cc.client_name, sum(tx.sms_count) as sms_count,
             sum(tx.client_price_total) as price_total, st.description as status_name from transaction_sms as tx
             left join client as cc on tx.client_id = cc.client_id
             left join client_to_reseller as cr on cr.client_id = cc.client_id
             left join transaction_status as st on tx.status_code = st.status_code
             where tx.transaction_date >= '".$startDate."' and tx.transaction_date <= '".$endDate."' and cr.reseller_id = '".$request->session()->get('reseller_id')."'
             group by day, tx.client_id, cc.client_name, st.description order by day desc");
+            }
+
         } else {
             //$dataSummary = DB::select("select date_trunc('day', tx.transaction_date) as day, tx.client_id, cc.client_name,
             //sum(tx.sms_count) as sms_count, sum(tx.client_price_total) as price_total, tx.status_code from transaction_sms as tx
             //left join client as cc on tx.client_id = cc.client_id where tx.transaction_date >= '".$startDate."' and tx.transaction_date <= '".$endDate.
             //"' and cc.client_group_id = '".$clientGroupId."' and tx.client_id = '".$selectedClientId."' group by day, tx.client_id, cc.client_name, tx.status_code order by day desc");
-
-            $dataSummary = DB::select("select date_trunc('day', tx.transaction_date) as day, tx.client_id, cc.client_name, sum(tx.sms_count) as sms_count,
-            sum(tx.client_price_total) as price_total, st.description as status_name from transaction_sms as tx
-            left join client as cc on tx.client_id = cc.client_id
-            left join client_to_reseller as cr on cr.client_id = cc.client_id
-            left join transaction_status as st on tx.status_code = st.status_code
-            where tx.transaction_date >= '".$startDate."' and tx.transaction_date <= '".$endDate."' and cr.reseller_id = '".$request->session()->get('reseller_id')."' and tx.client_id = '".$selectedClientId."'
-            group by day, tx.client_id, cc.client_name, st.description order by day desc");
+            if ($request->session()->get('privilege') == 'ROOT') {
+                $dataSummary = DB::select("select date_trunc('day', tx.transaction_date) as day, tx.client_id, cc.client_name, sum(tx.sms_count) as sms_count,
+                sum(tx.client_price_total) as price_total, st.description as status_name from transaction_sms as tx
+                left join client as cc on tx.client_id = cc.client_id
+                left join client_to_reseller as cr on cr.client_id = cc.client_id
+                left join transaction_status as st on tx.status_code = st.status_code
+                where tx.transaction_date >= '" . $startDate . "' and tx.transaction_date <= '" . $endDate . "' and tx.client_id = '" . $selectedClientId . "'
+                group by day, tx.client_id, cc.client_name, st.description order by day desc");
+            } else {
+                $dataSummary = DB::select("select date_trunc('day', tx.transaction_date) as day, tx.client_id, cc.client_name, sum(tx.sms_count) as sms_count,
+                sum(tx.client_price_total) as price_total, st.description as status_name from transaction_sms as tx
+                left join client as cc on tx.client_id = cc.client_id
+                left join client_to_reseller as cr on cr.client_id = cc.client_id
+                left join transaction_status as st on tx.status_code = st.status_code
+                where tx.transaction_date >= '" . $startDate . "' and tx.transaction_date <= '" . $endDate . "' and cr.reseller_id = '" . $request->session()->get('reseller_id') . "' and tx.client_id = '" . $selectedClientId . "'
+                group by day, tx.client_id, cc.client_name, st.description order by day desc");
+            }
         }
 
         return DataTables::of($dataSummary)
