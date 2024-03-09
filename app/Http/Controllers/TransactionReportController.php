@@ -37,9 +37,9 @@ class TransactionReportController extends Controller
             $clientData = DB::table('client')
                 ->select('client.client_id', 'client.client_name')
                 ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
-                ->leftJoin('users', 'users.id', '=', 'client_to_reseller.reseller_id')
+                ->leftJoin('users', 'users.client_id', '=', 'client_to_reseller.reseller_id')
                 ->where('client.is_active', '=', true)
-                ->where('users.id', '=', $request->session()->get('reseller_id'))
+                ->where('users.client_id', '=', $request->session()->get('reseller_id'))
                 ->orderBy('client_name')
                 ->get();
         } else {
@@ -114,6 +114,7 @@ class TransactionReportController extends Controller
                         'transaction_sms_vendor.vendor_hit_resp_date_time', 'transaction_sms_vendor.vendor_message_id',
                         'transaction_sms_vendor.vendor_callback_date_time', 'transaction_sms_vendor.vendor_trx_status');
             } else {
+                Log::debug($request->session()->get('reseller_id'));
                 $data = DB::table('transaction_sms')
                     ->leftJoin('transaction_status', 'transaction_sms.status_code', '=', 'transaction_status.status_code')
                     ->leftJoin('client', 'transaction_sms.client_id', '=', 'client.client_id')
@@ -499,9 +500,9 @@ class TransactionReportController extends Controller
             $clientData = DB::table('client')
                 ->select('client.client_id', 'client.client_name')
                 ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
-                ->leftJoin('users', 'users.id', '=', 'client_to_reseller.reseller_id')
+                ->leftJoin('users', 'users.client_id', '=', 'client_to_reseller.reseller_id')
                 ->where('client.is_active', '=', true)
-                ->where('users.id', '=', $request->session()->get('reseller_id'))
+                ->where('users.client_id', '=', $request->session()->get('reseller_id'))
                 ->orderBy('client_name')
                 ->get();
         } else {

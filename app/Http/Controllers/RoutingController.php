@@ -41,9 +41,9 @@ class RoutingController extends Controller
                 $dataClient = DB::table('client')
                     ->select('client.client_id', 'client.client_name')
                     ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
-                    ->leftJoin('users', 'users.id', '=', 'client_to_reseller.reseller_id')
+                    ->leftJoin('users', 'users.client_id', '=', 'client_to_reseller.reseller_id')
                     ->where('client.is_active', '=', true)
-                    ->where('users.id', '=', $request->session()->get('reseller_id'))
+                    ->where('users.client_id', '=', $request->session()->get('reseller_id'))
                     ->orderBy('client_name')
                     ->get();
             } else {

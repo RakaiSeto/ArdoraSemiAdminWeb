@@ -26,7 +26,7 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $request->input('email'), 'password' => $request->input('password'), 'privilege' => 'ROOT']) ||
             Auth::attempt(['email' => $request->input('email'), 'password' => $request->input('password'), 'privilege' => 'B2B_RESELLER'])) {
 
-            $request->session()->put("reseller_id", DB::table('users')->select('client_id')->where('email', '=', $request->input('email'))->get()[0]->id);
+            $request->session()->put("reseller_id", DB::table('users')->select('client_id')->where('email', '=', $request->input('email'))->get()[0]->client_id);
             $request->session()->put("email", $request->input('email'));
             $request->session()->put("privilege", DB::table('users')->select('privilege')->where('email', '=', $request->input('email'))->get()[0]->privilege);
             Auditrail::save_auditrail($request->session()->get('email'), $request->ip(), "LOGIN", "DO LOGIN || SUCCESS", $request->getHttpHost());
