@@ -9,10 +9,22 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 use Yajra\DataTables\Facades\DataTables;
 
 class RoutingController extends Controller
 {
+    function initiateRabbitMQConnection() {
+        $rabbitMqHost = env('RABBITMQ_HOST', 'localhost');
+        $rabbitMqPort = env('RABBITMQ_PORT', 5672);
+        $rabbitMqVHost = env('RABBITMQ_VHOST', 'BLASTME');
+        $rabbitMqUserName = env('RABBITMQ_USERNAME', 'chandra');
+        $rabbitMqPassword = env('RABBITMQ_PASSWORD', 'Eliandri3');
+
+        return new AMQPStreamConnection($rabbitMqHost, $rabbitMqPort, $rabbitMqUserName, $rabbitMqPassword, $rabbitMqVHost);
+    }
+
     function index(Request $request) {
         $groupId = Auth::user()->group_id;
 
@@ -309,6 +321,29 @@ class RoutingController extends Controller
                 })
             ->rawColumns(['action', 'is_charged_per_dr', 'fake_dr', 'is_active'])
             ->make(true);
+    }
+
+    function restart(Request $request) {
+        // queueMessage has to be in JSON
+        $queueMessage = json_encode(array("type" => "restartblastme"));
+        $finalQueueMessage = new AMQPMessage($queueMessage, ['content_type' => 'application/json', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT]);
+
+        // Open RabbitMQ Connection
+        $theConnection = $this->initiateRabbitMQConnection();
+
+        // Open RabbitMQ Channel
+        $theChannel = $theConnection->channel();
+
+        // Publish
+        $theChannel->basic_publish($finalQueueMessage, '', 'TRCV_SYSTEM_COMMAND');
+
+        // Close Channel
+        $theChannel->close();
+
+        // Close Connection
+        $theConnection->close();
+
+        return redirect('messagingrouting');
     }
 
     function doToggleRoutingTable(Request $request)

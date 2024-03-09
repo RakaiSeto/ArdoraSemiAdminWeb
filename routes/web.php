@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 //})->middleware('auth');
 
 // Report
+Route::get('/restartservice', 'App\Http\Controllers\RoutingController@restart')->middleware('authsysboss');
+
 Route::get('/', 'App\Http\Controllers\TransactionReportController@index')->middleware('authsysboss');
 Route::get('/report', 'App\Http\Controllers\TransactionReportController@index')->middleware('authsysboss');
 Route::get('/vendor', 'App\Http\Controllers\ReportVendorController@index')->middleware('authsysboss');
