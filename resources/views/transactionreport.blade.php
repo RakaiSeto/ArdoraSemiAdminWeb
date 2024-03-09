@@ -59,7 +59,6 @@
                                 <div class="pull-right">
                                     <button type="submit" class="btn btn-success" id="btnView"><i class="fa fa-envelope-o"></i> View</button>
                                 </div>
-                                <button type="submit" class="btn btn-danger" id="btnExport"><i class="fa fa-file"></i> Export</button>
                             </div>
                         </div>
                     </div>

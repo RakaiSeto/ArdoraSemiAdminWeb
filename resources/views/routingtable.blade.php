@@ -43,29 +43,12 @@
                                                     </select>
                                                 </div>
                                             </div>
-
-                                            <div class="form-group row">
-                                                <label for="searchField" class="col-sm-4 col-form-label">Search Field</label>
-                                                <div class="col-sm-8">
-                                                    <select class="form-control select2 w-p100" id="searchField">
-                                                        <option value="senderID" selected>Sender ID</option>
-                                                        <option value="client">Client Name</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group row">
-                                                <label for="searchKeyword" class="col-sm-4 col-form-label">Search Keyword</label>
-                                                <div class="col-sm-8">
-                                                    <input class="form-control" type="text" id="searchKeyword">
-                                                </div>
-                                            </div>
                                         </form>
                                     </div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-6">
+                                    <div class="col-12">
                                         <button type="button" class="btn btn-info pull-right" id="btnViewRouting">View Routing Table</button>
                                     </div>
                                 </div>
@@ -160,14 +143,8 @@
 @section('jscript')
     <script>
         // add click event listener for every element with class 'toggle-routing'
-        $(document).on('click', '.button-toggle', function(e) {
-            e.preventDefault()
 
-            let dataid = $(this).attr('data-id')
-            let isActive = $(this).attr('data-editIsActive')
 
-            window.location.href = "/dotoggle/" + dataid + "/" + isActive
-        })
 
         // add keyup event listener in id 'toggle-password'. if value == "plstoggle" then enable button with id 'btnToggle'
         $('#toggle-password').on('keyup', function(e) {
@@ -202,7 +179,7 @@
         }
 
         $(document).ready( function() {
-            let tableRouting = $('#tableRouting').DataTable({
+            var tableRouting = $('#tableRouting').DataTable({
                 processing: true,
                 serverSide: true,
                 searching: false,
@@ -227,6 +204,37 @@
                 ]
                 }
             )
+
+            $(document).on('click', '.button-toggle', function(e) {
+                e.preventDefault()
+
+                let dataid = $(this).attr('data-id')
+                let isActive = $(this).attr('data-editIsActive')
+
+                let theurl = "/dotoggle/" + dataid + "/" + isActive
+
+                //     do ajax to theurl
+                $.ajax({
+                    type: 'GET',
+                    url: theurl,
+                    success: function() {
+                        // console.log(dataX)
+                        // if (dataX === '0') {
+                        //     alert('Data Routing Table is updated.')
+                        // } else {
+                        //     alert('Failed to update data Routing Table.')
+                        // }
+
+                        tableRouting.ajax.reload(null, false)
+                    },
+                    fail: function(){
+                        // alert('Failed to update data Routing Table.')
+                    },
+                    error: function(){
+                        // alert('Failed to update data Routing Table.')
+                    }
+                })
+            })
 
             $('#btnViewRouting').on('click', function (e) {
                 tableRouting.ajax.reload()
