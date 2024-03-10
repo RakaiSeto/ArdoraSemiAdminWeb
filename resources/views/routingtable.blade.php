@@ -34,7 +34,11 @@
                                                 <label for="clientId" class="col-sm-4 col-form-label">Client</label>
                                                 <div class="col-sm-8">
                                                     <select class="form-control select2 w-p100" id="clientId">
-                                                        <option value="ALL" selected>ALL</option>
+                                                        @if(session('privilege') != 'ROOT')
+                                                            <option value="ALL" selected>Please Select the Client ID</option>
+                                                        @else
+                                                            <option value="ALL" selected>ALL</option>
+                                                        @endif
                                                         @if(isset($clientData))
                                                             @foreach($clientData as $data)
                                                                 <option value="{{ trim($data->client_id) }}">{{ trim($data->client_name) }}</option>

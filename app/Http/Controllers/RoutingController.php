@@ -133,22 +133,23 @@ class RoutingController extends Controller
                             'currency.currency_name', 'routing_table_sms.is_charged_per_dr', 'routing_table_sms.fake_dr', 'routing_table_sms.is_active')
                         ->orderBy('routing_table_sms.routing_id');
                 } else {
-                    $dataRouting = DB::table('routing_table_sms')
-                        ->leftJoin('client', 'routing_table_sms.client_id', '=', 'client.client_id')
-                        ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
-                        ->leftJoin('vendor_sms', 'routing_table_sms.vendor_id', '=', 'vendor_sms.vendor_id')
-                        ->leftJoin('currency', 'routing_table_sms.currency_id', '=', 'currency.currency_id')
-                        ->leftJoin('client_senderid_sms', 'routing_table_sms.client_sender_id_id', '=', 'client_senderid_sms.client_sender_id_id')
-                        ->leftJoin('vendor_senderid_sms', 'routing_table_sms.vendor_sender_id_id', '=', 'vendor_senderid_sms.vendor_sender_id_id')
-                        ->leftJoin('telecom', 'routing_table_sms.telecom_id', '=', 'telecom.telecom_id')
-                        ->where($searchCat, $operator, $searchKeyword)
-                        ->where('client_to_reseller.reseller_id', '=', $request->session()->get('reseller_id'))
-                        ->select('routing_table_sms.routing_id', 'routing_table_sms.client_id', 'client.client_name', 'routing_table_sms.client_user_api', 'routing_table_sms.client_sender_id_id', 'client_senderid_sms.sender_id as client_sender_id',
-                            'routing_table_sms.telecom_id', 'telecom.telecom_name', 'routing_table_sms.vendor_id', 'vendor_sms.vendor_name', 'routing_table_sms.vendor_sender_id_id', 'vendor_senderid_sms.sender_id as vendor_sender_id', DB::raw("coalesce(routing_table_sms.vendor_parameter_json, '') as vendor_parameter_json"),
-                            'routing_table_sms.client_price_per_submit', 'routing_table_sms.client_price_per_delivery', 'routing_table_sms.vendor_price_per_submit',
-                            'routing_table_sms.vendor_price_per_delivery', 'routing_table_sms.voice_unit_second', 'routing_table_sms.voice_price_per_unit', 'routing_table_sms.currency_id',
-                            'currency.currency_name', 'routing_table_sms.is_charged_per_dr', 'routing_table_sms.fake_dr', 'routing_table_sms.is_active')
-                        ->orderBy('routing_table_sms.routing_id');
+//                    $dataRouting = DB::table('routing_table_sms')
+//                        ->leftJoin('client', 'routing_table_sms.client_id', '=', 'client.client_id')
+//                        ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
+//                        ->leftJoin('vendor_sms', 'routing_table_sms.vendor_id', '=', 'vendor_sms.vendor_id')
+//                        ->leftJoin('currency', 'routing_table_sms.currency_id', '=', 'currency.currency_id')
+//                        ->leftJoin('client_senderid_sms', 'routing_table_sms.client_sender_id_id', '=', 'client_senderid_sms.client_sender_id_id')
+//                        ->leftJoin('vendor_senderid_sms', 'routing_table_sms.vendor_sender_id_id', '=', 'vendor_senderid_sms.vendor_sender_id_id')
+//                        ->leftJoin('telecom', 'routing_table_sms.telecom_id', '=', 'telecom.telecom_id')
+//                        ->where($searchCat, $operator, $searchKeyword)
+//                        ->where('client_to_reseller.reseller_id', '=', $request->session()->get('reseller_id'))
+//                        ->select('routing_table_sms.routing_id', 'routing_table_sms.client_id', 'client.client_name', 'routing_table_sms.client_user_api', 'routing_table_sms.client_sender_id_id', 'client_senderid_sms.sender_id as client_sender_id',
+//                            'routing_table_sms.telecom_id', 'telecom.telecom_name', 'routing_table_sms.vendor_id', 'vendor_sms.vendor_name', 'routing_table_sms.vendor_sender_id_id', 'vendor_senderid_sms.sender_id as vendor_sender_id', DB::raw("coalesce(routing_table_sms.vendor_parameter_json, '') as vendor_parameter_json"),
+//                            'routing_table_sms.client_price_per_submit', 'routing_table_sms.client_price_per_delivery', 'routing_table_sms.vendor_price_per_submit',
+//                            'routing_table_sms.vendor_price_per_delivery', 'routing_table_sms.voice_unit_second', 'routing_table_sms.voice_price_per_unit', 'routing_table_sms.currency_id',
+//                            'currency.currency_name', 'routing_table_sms.is_charged_per_dr', 'routing_table_sms.fake_dr', 'routing_table_sms.is_active')
+//                        ->orderBy('routing_table_sms.routing_id');
+                    $dataRouting = [];
                 }
             } else {
                 // Not search
@@ -168,21 +169,22 @@ class RoutingController extends Controller
                             'currency.currency_name', 'routing_table_sms.is_charged_per_dr', 'routing_table_sms.fake_dr', 'routing_table_sms.is_active')
                         ->orderBy('routing_table_sms.routing_id');
                 } else {
-                    $dataRouting = DB::table('routing_table_sms')
-                        ->leftJoin('client', 'routing_table_sms.client_id', '=', 'client.client_id')
-                        ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
-                        ->leftJoin('vendor_sms', 'routing_table_sms.vendor_id', '=', 'vendor_sms.vendor_id')
-                        ->leftJoin('currency', 'routing_table_sms.currency_id', '=', 'currency.currency_id')
-                        ->leftJoin('client_senderid_sms', 'routing_table_sms.client_sender_id_id', '=', 'client_senderid_sms.client_sender_id_id')
-                        ->leftJoin('vendor_senderid_sms', 'routing_table_sms.vendor_sender_id_id', '=', 'vendor_senderid_sms.vendor_sender_id_id')
-                        ->leftJoin('telecom', 'routing_table_sms.telecom_id', '=', 'telecom.telecom_id')
-                        ->where('client_to_reseller.reseller_id', '=', $request->session()->get('reseller_id'))
-                        ->select('routing_table_sms.routing_id', 'routing_table_sms.client_id', 'client.client_name', 'routing_table_sms.client_user_api', 'routing_table_sms.client_sender_id_id', 'client_senderid_sms.sender_id as client_sender_id',
-                            'routing_table_sms.telecom_id', 'telecom.telecom_name', 'routing_table_sms.vendor_id', 'vendor_sms.vendor_name', 'routing_table_sms.vendor_sender_id_id', 'vendor_senderid_sms.sender_id as vendor_sender_id', DB::raw("coalesce(routing_table_sms.vendor_parameter_json, '') as vendor_parameter_json"),
-                            'routing_table_sms.client_price_per_submit', 'routing_table_sms.client_price_per_delivery', 'routing_table_sms.vendor_price_per_submit',
-                            'routing_table_sms.vendor_price_per_delivery', 'routing_table_sms.voice_unit_second', 'routing_table_sms.voice_price_per_unit', 'routing_table_sms.currency_id',
-                            'currency.currency_name', 'routing_table_sms.is_charged_per_dr', 'routing_table_sms.fake_dr', 'routing_table_sms.is_active')
-                        ->orderBy('routing_table_sms.routing_id');
+//                    $dataRouting = DB::table('routing_table_sms')
+//                        ->leftJoin('client', 'routing_table_sms.client_id', '=', 'client.client_id')
+//                        ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
+//                        ->leftJoin('vendor_sms', 'routing_table_sms.vendor_id', '=', 'vendor_sms.vendor_id')
+//                        ->leftJoin('currency', 'routing_table_sms.currency_id', '=', 'currency.currency_id')
+//                        ->leftJoin('client_senderid_sms', 'routing_table_sms.client_sender_id_id', '=', 'client_senderid_sms.client_sender_id_id')
+//                        ->leftJoin('vendor_senderid_sms', 'routing_table_sms.vendor_sender_id_id', '=', 'vendor_senderid_sms.vendor_sender_id_id')
+//                        ->leftJoin('telecom', 'routing_table_sms.telecom_id', '=', 'telecom.telecom_id')
+//                        ->where('client_to_reseller.reseller_id', '=', $request->session()->get('reseller_id'))
+//                        ->select('routing_table_sms.routing_id', 'routing_table_sms.client_id', 'client.client_name', 'routing_table_sms.client_user_api', 'routing_table_sms.client_sender_id_id', 'client_senderid_sms.sender_id as client_sender_id',
+//                            'routing_table_sms.telecom_id', 'telecom.telecom_name', 'routing_table_sms.vendor_id', 'vendor_sms.vendor_name', 'routing_table_sms.vendor_sender_id_id', 'vendor_senderid_sms.sender_id as vendor_sender_id', DB::raw("coalesce(routing_table_sms.vendor_parameter_json, '') as vendor_parameter_json"),
+//                            'routing_table_sms.client_price_per_submit', 'routing_table_sms.client_price_per_delivery', 'routing_table_sms.vendor_price_per_submit',
+//                            'routing_table_sms.vendor_price_per_delivery', 'routing_table_sms.voice_unit_second', 'routing_table_sms.voice_price_per_unit', 'routing_table_sms.currency_id',
+//                            'currency.currency_name', 'routing_table_sms.is_charged_per_dr', 'routing_table_sms.fake_dr', 'routing_table_sms.is_active')
+//                        ->orderBy('routing_table_sms.routing_id');
+                    $dataRouting = [];
                 }
             }
         } else {
@@ -249,22 +251,40 @@ class RoutingController extends Controller
                 }
             } else {
                 // Not search
-                $dataRouting = DB::table('routing_table_sms')
-                    ->leftJoin('client', 'routing_table_sms.client_id', '=', 'client.client_id')
-                    ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
-                    ->leftJoin('vendor_sms', 'routing_table_sms.vendor_id', '=', 'vendor_sms.vendor_id')
-                    ->leftJoin('currency', 'routing_table_sms.currency_id', '=', 'currency.currency_id')
-                    ->leftJoin('client_senderid_sms', 'routing_table_sms.client_sender_id_id', '=', 'client_senderid_sms.client_sender_id_id')
-                    ->leftJoin('vendor_senderid_sms', 'routing_table_sms.vendor_sender_id_id', '=', 'vendor_senderid_sms.vendor_sender_id_id')
-                    ->leftJoin('telecom', 'routing_table_sms.telecom_id', '=', 'telecom.telecom_id')
-                    ->where('routing_table_sms.client_id', '=', $clientId)
-                    ->where('client_to_reseller.reseller_id', '=', $request->session()->get('reseller_id'))
-                    ->select('routing_table_sms.routing_id', 'routing_table_sms.client_id', 'client.client_name', 'routing_table_sms.client_user_api', 'routing_table_sms.client_sender_id_id', 'client_senderid_sms.sender_id as client_sender_id',
-                        'routing_table_sms.telecom_id', 'telecom.telecom_name', 'routing_table_sms.vendor_id', 'vendor_sms.vendor_name', 'routing_table_sms.vendor_sender_id_id', 'vendor_senderid_sms.sender_id as vendor_sender_id', DB::raw("coalesce(routing_table_sms.vendor_parameter_json, '') as vendor_parameter_json"),
-                        'routing_table_sms.client_price_per_submit', 'routing_table_sms.client_price_per_delivery', 'routing_table_sms.vendor_price_per_submit',
-                        'routing_table_sms.vendor_price_per_delivery', 'routing_table_sms.voice_unit_second', 'routing_table_sms.voice_price_per_unit', 'routing_table_sms.currency_id',
-                        'currency.currency_name', 'routing_table_sms.is_charged_per_dr', 'routing_table_sms.fake_dr', 'routing_table_sms.is_active')
-                    ->orderBy('routing_table_sms.routing_id');
+                if ($request->session()->get('privilege') == 'ROOT') {
+                    $dataRouting = DB::table('routing_table_sms')
+                        ->leftJoin('client', 'routing_table_sms.client_id', '=', 'client.client_id')
+                        ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
+                        ->leftJoin('vendor_sms', 'routing_table_sms.vendor_id', '=', 'vendor_sms.vendor_id')
+                        ->leftJoin('currency', 'routing_table_sms.currency_id', '=', 'currency.currency_id')
+                        ->leftJoin('client_senderid_sms', 'routing_table_sms.client_sender_id_id', '=', 'client_senderid_sms.client_sender_id_id')
+                        ->leftJoin('vendor_senderid_sms', 'routing_table_sms.vendor_sender_id_id', '=', 'vendor_senderid_sms.vendor_sender_id_id')
+                        ->leftJoin('telecom', 'routing_table_sms.telecom_id', '=', 'telecom.telecom_id')
+                        ->where('routing_table_sms.client_id', '=', $clientId)
+                        ->select('routing_table_sms.routing_id', 'routing_table_sms.client_id', 'client.client_name', 'routing_table_sms.client_user_api', 'routing_table_sms.client_sender_id_id', 'client_senderid_sms.sender_id as client_sender_id',
+                            'routing_table_sms.telecom_id', 'telecom.telecom_name', 'routing_table_sms.vendor_id', 'vendor_sms.vendor_name', 'routing_table_sms.vendor_sender_id_id', 'vendor_senderid_sms.sender_id as vendor_sender_id', DB::raw("coalesce(routing_table_sms.vendor_parameter_json, '') as vendor_parameter_json"),
+                            'routing_table_sms.client_price_per_submit', 'routing_table_sms.client_price_per_delivery', 'routing_table_sms.vendor_price_per_submit',
+                            'routing_table_sms.vendor_price_per_delivery', 'routing_table_sms.voice_unit_second', 'routing_table_sms.voice_price_per_unit', 'routing_table_sms.currency_id',
+                            'currency.currency_name', 'routing_table_sms.is_charged_per_dr', 'routing_table_sms.fake_dr', 'routing_table_sms.is_active')
+                        ->orderBy('routing_table_sms.routing_id');
+                } else {
+                    $dataRouting = DB::table('routing_table_sms')
+                        ->leftJoin('client', 'routing_table_sms.client_id', '=', 'client.client_id')
+                        ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
+                        ->leftJoin('vendor_sms', 'routing_table_sms.vendor_id', '=', 'vendor_sms.vendor_id')
+                        ->leftJoin('currency', 'routing_table_sms.currency_id', '=', 'currency.currency_id')
+                        ->leftJoin('client_senderid_sms', 'routing_table_sms.client_sender_id_id', '=', 'client_senderid_sms.client_sender_id_id')
+                        ->leftJoin('vendor_senderid_sms', 'routing_table_sms.vendor_sender_id_id', '=', 'vendor_senderid_sms.vendor_sender_id_id')
+                        ->leftJoin('telecom', 'routing_table_sms.telecom_id', '=', 'telecom.telecom_id')
+                        ->where('routing_table_sms.client_id', '=', $clientId)
+                        ->where('client_to_reseller.reseller_id', '=', $request->session()->get('reseller_id'))
+                        ->select('routing_table_sms.routing_id', 'routing_table_sms.client_id', 'client.client_name', 'routing_table_sms.client_user_api', 'routing_table_sms.client_sender_id_id', 'client_senderid_sms.sender_id as client_sender_id',
+                            'routing_table_sms.telecom_id', 'telecom.telecom_name', 'routing_table_sms.vendor_id', 'vendor_sms.vendor_name', 'routing_table_sms.vendor_sender_id_id', 'vendor_senderid_sms.sender_id as vendor_sender_id', DB::raw("coalesce(routing_table_sms.vendor_parameter_json, '') as vendor_parameter_json"),
+                            'routing_table_sms.client_price_per_submit', 'routing_table_sms.client_price_per_delivery', 'routing_table_sms.vendor_price_per_submit',
+                            'routing_table_sms.vendor_price_per_delivery', 'routing_table_sms.voice_unit_second', 'routing_table_sms.voice_price_per_unit', 'routing_table_sms.currency_id',
+                            'currency.currency_name', 'routing_table_sms.is_charged_per_dr', 'routing_table_sms.fake_dr', 'routing_table_sms.is_active')
+                        ->orderBy('routing_table_sms.routing_id');
+                }
             }
         }
 
