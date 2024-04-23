@@ -46,25 +46,27 @@ class ReportController extends Controller
             $data = DB::table('transaction_sms as trx')
                 ->leftJoin('transaction_status as stat', 'trx.status_code', '=', 'stat.status_code')
                 ->leftJoin('transaction_sms_financial as trf', 'trx.message_id', '=', 'trf.message_id')
+                ->leftJoin('telecom as tel', 'tel.telecom_id', '=', 'trx.telecom_id')
                 ->where('trx.transaction_date', '>=', $startDate)
                 ->where('trx.transaction_date', '<=', $endDate)
                 ->where('trx.client_id', '=', $clientId)
                 ->where($searchField, '=', $searchKeyword)
                 ->select('trx.transaction_date', 'trx.message_id', 'trx.batch_id', 'trx.client_sender_id',
                     'trx.msisdn', 'trx.message', 'trx.status_code', 'stat.description as status_description', 'trf.previous_balance',
-                    'trf.usage', 'trf.after_balance'
+                    'trf.usage', 'trf.after_balance', 'tel.telecom_name'
                 )
                 ->orderBy('trx.transaction_date', 'desc');
         } else {
             $data = DB::table('transaction_sms as trx')
                 ->leftJoin('transaction_status as stat', 'trx.status_code', '=', 'stat.status_code')
                 ->leftJoin('transaction_sms_financial as trf', 'trx.message_id', '=', 'trf.message_id')
+                ->leftJoin('telecom as tel', 'tel.telecom_id', '=', 'trx.telecom_id')
                 ->where('trx.transaction_date', '>=', $startDate)
                 ->where('trx.transaction_date', '<=', $endDate)
                 ->where('trx.client_id', '=', $clientId)
                 ->select('trx.transaction_date', 'trx.message_id', 'trx.batch_id', 'trx.client_sender_id',
                     'trx.msisdn', 'trx.message', 'trx.status_code', 'stat.description as status_description', 'trf.previous_balance',
-                    'trf.usage', 'trf.after_balance'
+                    'trf.usage', 'trf.after_balance', 'tel.telecom_name'
                 )
                 ->orderBy('trx.transaction_date', 'desc');
         }

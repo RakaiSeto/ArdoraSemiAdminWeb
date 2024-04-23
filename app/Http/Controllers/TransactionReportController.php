@@ -12,7 +12,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class TransactionReportController extends Controller
 {
-    private function initiateRabbitMQConnection() {
+    private function initiateRabbitMQConnection()
+    {
         $rabbitMqHost = env('RABBITMQ_HOST', '172.31.24.217');
         $rabbitMqPort = env('RABBITMQ_PORT', 5672);
         $rabbitMqVHost = env('RABBITMQ_VHOST', 'BLASTME');
@@ -22,7 +23,8 @@ class TransactionReportController extends Controller
         return new AMQPStreamConnection($rabbitMqHost, $rabbitMqPort, $rabbitMqUserName, $rabbitMqPassword, $rabbitMqVHost);
     }
 
-    function index(Request $request) {
+    function index(Request $request)
+    {
         $clientGroupId = Auth::user()->group_id;
 
         // Get data client
@@ -33,7 +35,7 @@ class TransactionReportController extends Controller
                 ->where('is_active', '=', true)
                 ->orderBy('client_name')
                 ->get();
-        } else if ($request->session()->get('privilege') === 'SYSADMIN' || $request->session()->get('privilege') === 'SYSFINANCE' || $request->session()->get('privilege') === 'SYSOP' || $request->session()->get('privilege') === 'REPORT' || $request->session()->get('privilege') === "B2B_USER" || $request->session()->get('privilege') === "B2B_RESELLER")  {
+        } else if ($request->session()->get('privilege') === 'SYSADMIN' || $request->session()->get('privilege') === 'SYSFINANCE' || $request->session()->get('privilege') === 'SYSOP' || $request->session()->get('privilege') === 'REPORT' || $request->session()->get('privilege') === "B2B_USER" || $request->session()->get('privilege') === "B2B_RESELLER") {
             $clientData = DB::table('client')
                 ->select('client.client_id', 'client.client_name')
                 ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
@@ -49,31 +51,32 @@ class TransactionReportController extends Controller
         return view('transactionreport')->with('clientData', $clientData);
     }
 
-    function getDataTable(Request $request) {
+    function getDataTable(Request $request)
+    {
         $clientGroupId = Auth::user()->group_id;
         //$privilege = $request->session()->get('privilege');
         $selectedClientId = $request->input('clientid');
         $searchCategory = $request->input('searchcategory');
         $searchKeyword = $request->input('searchkeyword');
 
-        if($request->ajax())  {
-            if(isset($request->daterange)) {
+        if ($request->ajax()) {
+            if (isset($request->daterange)) {
                 $dateRange = $request->daterange;
 
                 $splittedDateRange = explode('-', $dateRange);
 
-                if(count($splittedDateRange) === 2) {
+                if (count($splittedDateRange) === 2) {
                     $startDate = trim($splittedDateRange[0]);
 
                     // Change from dd/mm/yyyy to yyyy-mm-dd
                     $splitedStartDate = explode('/', $startDate);
-                    $startDate = $splitedStartDate[2].'-'.$splitedStartDate[1].'-'.$splitedStartDate[0].' 00:00:00';
+                    $startDate = $splitedStartDate[2] . '-' . $splitedStartDate[1] . '-' . $splitedStartDate[0] . ' 00:00:00';
 
                     $endDate = trim($splittedDateRange[1]);
 
                     // Change from dd/mm/yyyy to yyyy-mm-dd
                     $splitedEndDate = explode('/', $endDate);
-                    $endDate = $splitedEndDate[2].'-'.$splitedEndDate[1].'-'.$splitedEndDate[0].' 23:59:59';
+                    $endDate = $splitedEndDate[2] . '-' . $splitedEndDate[1] . '-' . $splitedEndDate[0] . ' 23:59:59';
                 } else {
                     $startDate = date('Y-m-d 00:00:00');
                     $endDate = date('Y-m-d 23:59:59');
@@ -107,7 +110,7 @@ class TransactionReportController extends Controller
                     ->where('transaction_sms.transaction_date', '<=', $endDate)
                     ->select(
                         'transaction_sms.transaction_date', 'transaction_sms.batch_id', 'transaction_sms.message_id',
-                        'transaction_sms.client_sender_id', 'transaction_sms.msisdn', 'transaction_sms.message', 'transaction_status.description',
+                        'transaction_sms.client_sender_id', 'transaction_sms.msisdn', 'telecom.telecom_name', 'transaction_sms.message', 'transaction_status.description',
                         'client.client_name', 'country.country_name', 'telecom.telecom_name', 'transaction_sms.message_encodng', 'transaction_sms.message_length',
                         'transaction_sms.sms_count', 'transaction_sms_financial.previous_balance', 'transaction_sms.client_price_total', 'transaction_sms_financial.after_balance',
                         'transaction_sms_vendor.vendor_id', 'transaction_sms_vendor.vendor_hit_date_time',
@@ -128,7 +131,7 @@ class TransactionReportController extends Controller
                     ->where('client_to_reseller.reseller_id', '=', $request->session()->get('reseller_id'))
                     ->select(
                         'transaction_sms.transaction_date', 'transaction_sms.batch_id', 'transaction_sms.message_id',
-                        'transaction_sms.client_sender_id', 'transaction_sms.msisdn', 'transaction_sms.message', 'transaction_status.description',
+                        'transaction_sms.client_sender_id', 'transaction_sms.msisdn', 'telecom.telecom_name', 'transaction_sms.message', 'transaction_status.description',
                         'client.client_name', 'country.country_name', 'telecom.telecom_name', 'transaction_sms.message_encodng', 'transaction_sms.message_length',
                         'transaction_sms.sms_count', 'transaction_sms_financial.previous_balance', 'transaction_sms.client_price_total', 'transaction_sms_financial.after_balance',
                         'transaction_sms_vendor.vendor_id', 'transaction_sms_vendor.vendor_hit_date_time',
@@ -146,9 +149,9 @@ class TransactionReportController extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    return '<a href="javascript:void(0)" class="edit btn btn-success btn-sm" data-toggle="modal" data-target="#modalDetailTransaction" data-messageId="'.
-                        $row->message_id.'">View Detail</a>';
+                ->addColumn('action', function ($row) {
+                    return '<a href="javascript:void(0)" class="edit btn btn-success btn-sm" data-toggle="modal" data-target="#modalDetailTransaction" data-messageId="' .
+                        $row->message_id . '">View Detail</a>';
                 })
                 ->editColumn('previous_balance', function ($row) {
                     return number_format($row->previous_balance, 5, '.', ',');
@@ -178,18 +181,18 @@ class TransactionReportController extends Controller
         // split transactionDateTime to startDateTime and endDateTime
         $splittedDateRange = explode('-', $transactionDateTime);
 
-        if(count($splittedDateRange) === 2) {
+        if (count($splittedDateRange) === 2) {
             $startDate = trim($splittedDateRange[0]);
 
             // Change from dd/mm/yyyy to yyyy-mm-dd
             $splitedStartDate = explode('/', $startDate);
-            $startDate = $splitedStartDate[2].'-'.$splitedStartDate[1].'-'.$splitedStartDate[0].' 00:00:00';
+            $startDate = $splitedStartDate[2] . '-' . $splitedStartDate[1] . '-' . $splitedStartDate[0] . ' 00:00:00';
 
             $endDate = trim($splittedDateRange[1]);
 
             // Change from dd/mm/yyyy to yyyy-mm-dd
             $splitedEndDate = explode('/', $endDate);
-            $endDate = $splitedEndDate[2].'-'.$splitedEndDate[1].'-'.$splitedEndDate[0].' 23:59:59';
+            $endDate = $splitedEndDate[2] . '-' . $splitedEndDate[1] . '-' . $splitedEndDate[0] . ' 23:59:59';
         } else {
             $startDate = date('Y-m-d 00:00:00');
             $endDate = date('Y-m-d 23:59:59');
@@ -202,14 +205,14 @@ class TransactionReportController extends Controller
 
         $requestDateTime = date('Y-m-d H:i:s');
 
-        $requestId = $userEmail.'-'.$selectedClientId.'-'.date('ymdHis');
+        $requestId = $userEmail . '-' . $selectedClientId . '-' . date('ymdHis');
 
         // Save to table report request transaction sms
         try {
             $insertResult = DB::table('report_request_transaction_sms')
                 ->insert(['request_id' => $requestId, 'request_datetime' => $requestDateTime, 'username' => $userEmail, 'start_datetime' => $startDate,
                     'end_datetime' => $endDate, 'client_id' => $selectedClientId, 'search_keyword' => $searchKeyword, 'search_parameter' => $searchCategory,
-                    'is_generated' => false, 'is_generated_2' => false, 'file_path_2' => $requestId.'.csv']);
+                    'is_generated' => false, 'is_generated_2' => false, 'file_path_2' => $requestId . '.csv']);
 
 
             if ($insertResult) {
@@ -226,10 +229,10 @@ class TransactionReportController extends Controller
                 //  "clientGroupId" => $clientGroupId,
                 //  "privilege" => $privilege
 
-                $reportRequestQueueName = 'CSV_REPORT_SMS_ADMIN';
+                $reportRequestQueueName = 'CSV_REPORT_SMS_ADMIN_SMSELLER';
                 $queueMessage = json_encode(array('requestId' => $requestId, 'startDateTime' => $startDate, 'endDateTime' => $endDate,
                     'selectedClientId' => $selectedClientId, 'searchCategory' => $searchCategory, 'searchKeyword' => $searchKeyword,
-                    'userEmail' => $userEmail, 'clientId' => $clientId, 'clientGroupId' => $clientGroupId, 'privilege' => $privilege));
+                    'userEmail' => $userEmail, 'clientId' => $clientId, 'clientGroupId' => $clientGroupId, 'privilege' => $privilege, 'resellerId' => $request->session()->get('reseller_id')));
                 $finalQueueMessage = new AMQPMessage($queueMessage, ['content_type' => 'application/json', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT]);
 
                 // Open RabbitMQ Connection
@@ -270,18 +273,18 @@ class TransactionReportController extends Controller
         // split transactionDateTime to startDateTime and endDateTime
         $splittedDateRange = explode('-', $transactionDateTime);
 
-        if(count($splittedDateRange) === 2) {
+        if (count($splittedDateRange) === 2) {
             $startDate = trim($splittedDateRange[0]);
 
             // Change from dd/mm/yyyy to yyyy-mm-dd
             $splitedStartDate = explode('/', $startDate);
-            $startDate = $splitedStartDate[2].'-'.$splitedStartDate[1].'-'.$splitedStartDate[0].' 00:00:00';
+            $startDate = $splitedStartDate[2] . '-' . $splitedStartDate[1] . '-' . $splitedStartDate[0] . ' 00:00:00';
 
             $endDate = trim($splittedDateRange[1]);
 
             // Change from dd/mm/yyyy to yyyy-mm-dd
             $splitedEndDate = explode('/', $endDate);
-            $endDate = $splitedEndDate[2].'-'.$splitedEndDate[1].'-'.$splitedEndDate[0].' 23:59:59';
+            $endDate = $splitedEndDate[2] . '-' . $splitedEndDate[1] . '-' . $splitedEndDate[0] . ' 23:59:59';
         } else {
             $startDate = date('Y-m-d 00:00:00');
             $endDate = date('Y-m-d 23:59:59');
@@ -294,14 +297,14 @@ class TransactionReportController extends Controller
 
         $requestDateTime = date('Y-m-d H:i:s');
 
-        $requestId = $userEmail.'-'.$selectedClientId.'-'.date('ymdHis');
+        $requestId = $userEmail . '-' . $selectedClientId . '-' . date('ymdHis');
 
         // Save to table report request transaction sms
         try {
             Log::debug('KESINI BRO');
             $insertResult = DB::table('report_request_transaction_summary_sms')
                 ->insert(['request_id' => $requestId, 'request_datetime' => $requestDateTime, 'username' => $userEmail, 'start_datetime' => $startDate,
-                    'end_datetime' => $endDate, 'client_id' => $selectedClientId,  'is_generated' => false, 'is_generated_2' => false, 'file_path_2' => $requestId.'.csv']);
+                    'end_datetime' => $endDate, 'client_id' => $selectedClientId, 'is_generated' => false, 'is_generated_2' => false, 'file_path_2' => $requestId . '.csv']);
 
             Log::debug($insertResult);
 
@@ -351,9 +354,10 @@ class TransactionReportController extends Controller
         }
     }
 
-    function csvReport() {
+    function csvReport()
+    {
         $clientGroupId = Auth::user()->group_id;
-        Log::debug('clientGroupId: '.$clientGroupId);
+        Log::debug('clientGroupId: ' . $clientGroupId);
 
         // Get data client
         if (Auth::user()->privilege === 'ROOT') {
@@ -376,19 +380,20 @@ class TransactionReportController extends Controller
         return view('exportedreport')->with('clientData', $clientData);
     }
 
-    function getCSVDataTable(Request $request) {
+    function getCSVDataTable(Request $request)
+    {
         $clientGroupId = Auth::user()->group_id;
         $privilege = Auth::user()->privilege;
 
         $searchCategory = $request->input('searchCategory');
         $searchKeyword = $request->input('searchKeyword');
 
-        Log::debug('clientGroupId: '.$clientGroupId.', privilege: '.$privilege);
+        Log::debug('clientGroupId: ' . $clientGroupId . ', privilege: ' . $privilege);
 
         $searchField = 'ccc.client_name';
         $operator = 'ilike';
 
-        if($request->ajax())  {
+        if ($request->ajax()) {
             if ($privilege === 'ROOT') {
                 if (trim($searchKeyword) != '') {
                     if ($searchCategory === 'clientId') {
@@ -397,13 +402,13 @@ class TransactionReportController extends Controller
                     } else if ($searchCategory === 'clientName') {
                         $searchField = 'ccc.client_name';
                         $operator = 'ilike';
-                        $searchKeyword = '%'.$searchKeyword.'%';
+                        $searchKeyword = '%' . $searchKeyword . '%';
                     }
 
                     $data = DB::table('report_request_transaction_sms as rpt')
                         ->leftJoin('client as ccc', 'rpt.client_id', '=', 'ccc.client_id')
                         // ->where('ccc.is_active', '=', true)
-->where('rpt.username','=',$userEmail)
+                        ->where('rpt.username', '=', $userEmail)
                         ->where($searchField, $operator, $searchKeyword)
                         ->select('rpt.request_id', 'rpt.request_datetime', 'rpt.username', 'rpt.start_datetime',
                             'rpt.end_datetime', 'rpt.client_id', 'ccc.client_name', 'rpt.search_keyword', 'rpt.search_parameter',
@@ -413,7 +418,7 @@ class TransactionReportController extends Controller
                     $data = DB::table('report_request_transaction_sms as rpt')
                         ->leftJoin('client as ccc', 'rpt.client_id', '=', 'ccc.client_id')
                         //->where('ccc.is_active', '=', true)
-->where('rpt.username','=',$userEmail)
+                        ->where('rpt.username', '=', $userEmail)
                         ->select('rpt.request_id', 'rpt.request_datetime', 'rpt.username', 'rpt.start_datetime',
                             'rpt.end_datetime', 'rpt.client_id', 'ccc.client_name', 'rpt.search_keyword', 'rpt.search_parameter',
                             'rpt.is_generated_2', 'rpt.file_path_2')
@@ -427,7 +432,7 @@ class TransactionReportController extends Controller
                     } else if ($searchCategory === 'clientName') {
                         $searchField = 'ccc.client_name';
                         $operator = 'ilike';
-                        $searchKeyword = '%'.$searchKeyword.'%';
+                        $searchKeyword = '%' . $searchKeyword . '%';
                     }
 
                     $data = DB::table('report_request_transaction_sms as rpt')
@@ -458,7 +463,7 @@ class TransactionReportController extends Controller
             }
 
             return DataTables::of($data)
-                ->editColumn('is_generated_2', function($row) {
+                ->editColumn('is_generated_2', function ($row) {
                     if ($row->is_generated_2 === true) {
                         $booleanBox = '<i class="fa fa-check" aria-hidden="true" style="color: green"></i>';
                     } else {
@@ -468,12 +473,12 @@ class TransactionReportController extends Controller
                     return $booleanBox;
                 })
                 ->addIndexColumn()
-                ->addColumn('action', function($row){
+                ->addColumn('action', function ($row) {
                     if ($row->is_generated_2 === true) {
                         //$url = "https://dl-report.artamaya.com:9903/report/".$row->file_path_2;
                         //$url =  url("/storage/reports") . "/" . $row->file_path_2;
-                        $url =  "https://neoadmin.krapoex.com/storage/reports/" . $row->file_path_2;
-                        $btn = '<a href="'.$url.'" class="edit btn btn-success btn-sm" data-toggle="_blank">Download</a>';
+                        $url = "https://neoadmin.krapoex.com/storage/reports/" . $row->file_path_2;
+                        $btn = '<a href="' . $url . '" class="edit btn btn-success btn-sm" data-toggle="_blank">Download</a>';
                     } else {
                         $btn = '';
                     }
@@ -486,7 +491,8 @@ class TransactionReportController extends Controller
         }
     }
 
-    function summaryTransaction(Request $request) {
+    function summaryTransaction(Request $request)
+    {
         $clientGroupId = Auth::user()->group_id;
 
         // Get data client
@@ -496,7 +502,7 @@ class TransactionReportController extends Controller
                 ->where('is_active', '=', true)
                 ->orderBy('client_name')
                 ->get();
-        } else if ($request->session()->get('privilege') === 'SYSADMIN' || $request->session()->get('privilege') === 'SYSFINANCE' || $request->session()->get('privilege') === 'SYSOP' || $request->session()->get('privilege') === 'REPORT' || $request->session()->get('privilege') === "B2B_USER" || $request->session()->get('privilege') === "B2B_RESELLER")  {
+        } else if ($request->session()->get('privilege') === 'SYSADMIN' || $request->session()->get('privilege') === 'SYSFINANCE' || $request->session()->get('privilege') === 'SYSOP' || $request->session()->get('privilege') === 'REPORT' || $request->session()->get('privilege') === "B2B_USER" || $request->session()->get('privilege') === "B2B_RESELLER") {
             $clientData = DB::table('client')
                 ->select('client.client_id', 'client.client_name')
                 ->leftJoin('client_to_reseller', 'client_to_reseller.client_id', '=', 'client.client_id')
@@ -512,26 +518,27 @@ class TransactionReportController extends Controller
         return view('transactionsummary')->with('clientData', $clientData);
     }
 
-    function getSummaryFinancialDataTable(Request $request) {
+    function getSummaryFinancialDataTable(Request $request)
+    {
         $clientGroupId = env("APP_CLIENT_GROUP_ID", "");
 
-        if($request->input('daterange') !== null) {
+        if ($request->input('daterange') !== null) {
             $dateRange = $request->input('daterange');
 
             $splittedDateRange = explode('-', $dateRange);
 
-            if(count($splittedDateRange) === 2) {
+            if (count($splittedDateRange) === 2) {
                 $startDate = trim($splittedDateRange[0]);
 
                 // Change from dd/mm/yyyy to yyyy-mm-dd
                 $splitedStartDate = explode('/', $startDate);
-                $startDate = $splitedStartDate[2].'-'.$splitedStartDate[1].'-'.$splitedStartDate[0].' 00:00:00';
+                $startDate = $splitedStartDate[2] . '-' . $splitedStartDate[1] . '-' . $splitedStartDate[0] . ' 00:00:00';
 
                 $endDate = trim($splittedDateRange[1]);
 
                 // Change from dd/mm/yyyy to yyyy-mm-dd
                 $splitedEndDate = explode('/', $endDate);
-                $endDate = $splitedEndDate[2].'-'.$splitedEndDate[1].'-'.$splitedEndDate[0].' 23:59:59';
+                $endDate = $splitedEndDate[2] . '-' . $splitedEndDate[1] . '-' . $splitedEndDate[0] . ' 23:59:59';
             } else {
                 $startDate = date('Y-m-d 00:00:00');
                 $endDate = date('Y-m-d 23:59:59');
@@ -543,7 +550,7 @@ class TransactionReportController extends Controller
 
         $selectedClientId = $request->input('selectedclientid');
 
-        Log::debug('clientGroupId: '.$clientGroupId.', selectedClientId: '.$selectedClientId);
+        Log::debug('clientGroupId: ' . $clientGroupId . ', selectedClientId: ' . $selectedClientId);
 
         if ($selectedClientId === 'ALL') {
             //$dataSummary = DB::select("select date_trunc('day', tx.transaction_date) as day, tx.client_id, cc.client_name,
@@ -556,7 +563,7 @@ class TransactionReportController extends Controller
             left join client as cc on tx.client_id = cc.client_id
             left join client_to_reseller as cr on cr.client_id = cc.client_id
             left join transaction_status as st on tx.status_code = st.status_code
-            where tx.transaction_date >= '".$startDate."' and tx.transaction_date <= '".$endDate."'
+            where tx.transaction_date >= '" . $startDate . "' and tx.transaction_date <= '" . $endDate . "'
             group by day, tx.client_id, cc.client_name, st.description order by day desc");
             } else {
                 $dataSummary = DB::select("select date_trunc('day', tx.transaction_date) as day, tx.client_id, cc.client_name, sum(tx.sms_count) as sms_count,
@@ -564,7 +571,7 @@ class TransactionReportController extends Controller
             left join client as cc on tx.client_id = cc.client_id
             left join client_to_reseller as cr on cr.client_id = cc.client_id
             left join transaction_status as st on tx.status_code = st.status_code
-            where tx.transaction_date >= '".$startDate."' and tx.transaction_date <= '".$endDate."' and cr.reseller_id = '".$request->session()->get('reseller_id')."'
+            where tx.transaction_date >= '" . $startDate . "' and tx.transaction_date <= '" . $endDate . "' and cr.reseller_id = '" . $request->session()->get('reseller_id') . "'
             group by day, tx.client_id, cc.client_name, st.description order by day desc");
             }
 
@@ -603,18 +610,18 @@ class TransactionReportController extends Controller
 
         $splittedDateRange = explode('-', $dateRange);
 
-        if(count($splittedDateRange) === 2) {
+        if (count($splittedDateRange) === 2) {
             $startDate = trim($splittedDateRange[0]);
 
             // Change from dd/mm/yyyy to yyyy-mm-dd
             $splitedStartDate = explode('/', $startDate);
-            $startDate = $splitedStartDate[2].'-'.$splitedStartDate[1].'-'.$splitedStartDate[0].' 00:00:00';
+            $startDate = $splitedStartDate[2] . '-' . $splitedStartDate[1] . '-' . $splitedStartDate[0] . ' 00:00:00';
 
             $endDate = trim($splittedDateRange[1]);
 
             // Change from dd/mm/yyyy to yyyy-mm-dd
             $splitedEndDate = explode('/', $endDate);
-            $endDate = $splitedEndDate[2].'-'.$splitedEndDate[1].'-'.$splitedEndDate[0].' 23:59:59';
+            $endDate = $splitedEndDate[2] . '-' . $splitedEndDate[1] . '-' . $splitedEndDate[0] . ' 23:59:59';
         } else {
             $startDate = date('Y-m-d 00:00:00');
             $endDate = date('Y-m-d 23:59:59');
@@ -641,7 +648,7 @@ left join lateral (select trv.vendor_id, trv.vendor_hit_date_time, trv.vendor_hi
 				   trv.vendor_message_id, trv.vendor_callback_date_time, trv.vendor_callback, trv.vendor_trx_status from transaction_sms_vendor as trv
 				  where trv.message_id = trx.message_id limit 1) ltrv on true
 left join lateral (select vvv.vendor_name from vendor_sms as vvv where ltrv.vendor_id = vvv.vendor_id limit 1) as lvvv on true
-where trx.message_id = :parmessageid"), array('parmessageid' =>$messageid));
+where trx.message_id = :parmessageid"), array('parmessageid' => $messageid));
 
         return json_encode($data);
     }

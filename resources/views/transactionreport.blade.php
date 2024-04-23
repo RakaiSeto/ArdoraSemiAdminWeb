@@ -56,6 +56,9 @@
                                 </div>
                             </div>
                             <div class="box-footer">
+                                <div class="pull-left">
+                                    <button type="button" class="btn btn-primary" id="btnExport"><i class="fa fa-download"></i> Export</button>
+                                </div>
                                 <div class="pull-right">
                                     <button type="submit" class="btn btn-success" id="btnView"><i class="fa fa-envelope-o"></i> View</button>
                                 </div>
