@@ -32,12 +32,11 @@
 {{--                <ul class="treeview-menu">--}}
 {{--                    <li><a href="/report"><i class="ti-printer"></i>Report</a></li>--}}
 {{--                    <li><a href="/vendor"><i class="ti-printer"></i>Report Vendor</a></li>--}}
-{{--                    <li><a href="/csvreport"><i class="ti-receipt"></i>Exported Reports</a></li>--}}
 
 {{--                    @if(AUTH::user()->privilege === 'ROOT')--}}
 {{--                    <li><a href="/activity"><i class="ti-mouse"></i>Activity</a></li>--}}
-{{--                    @endif--}}
 
+{{--                    @endif--}}
 {{--                </ul>--}}
 {{--            </li>--}}
 
@@ -54,6 +53,9 @@
                     <span>Routing Table</span>
                 </a>
             </li>
+
+            <li>
+                <a href="/csvreport"><i class="ti-receipt"></i>Exported Reports</a></li>
 
             <li>
                 <a href="/balance">

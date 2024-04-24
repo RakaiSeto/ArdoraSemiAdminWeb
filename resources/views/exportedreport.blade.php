@@ -3,46 +3,53 @@
 @section('content')
     <div class="content-wrapper">
         <div class="container-full">
-            <div class="modal center-modal fade" id="modalFindClient" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="box-title">Find Client</h5>
-                            <button type="button" class="close" data-dismiss="modal">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <form class="form-element">
-                                <div class="box-body">
-                                    {{ csrf_field() }}
-                                    <div class="form-group row">
-                                        <label for="findClientField" class="col-sm-4 col-form-label">Find Field</label>
-                                        <div class="col-sm-8">
-                                            <select class="form-control select2 w-p100" id="findClientField">
-                                                <option value="clientId">Client ID</option>
-                                                <option value="clientName" selected>Client Name</option>
-                                            </select>
-                                        </div>
-                                    </div>
+            @if(session('privilege') == 'ROOT')
 
-                                    <div class="form-group row">
-                                        <label for="findClientKeyword" class="col-sm-4 col-form-label">Find Keyword</label>
-                                        <div class="col-sm-8">
-                                            <input class="form-control" type="text" id="findClientKeyword">
+                <div class="modal center-modal fade" id="modalFindClient" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="box-title">Find Client</h5>
+                                <button type="button" class="close" data-dismiss="modal">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-element">
+                                    <div class="box-body">
+                                        {{ csrf_field() }}
+                                        <div class="form-group row">
+                                            <label for="findClientField" class="col-sm-4 col-form-label">Find
+                                                Field</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control select2 w-p100" id="findClientField">
+                                                    <option value="clientId">Client ID</option>
+                                                    <option value="clientName" selected>Client Name</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer modal-footer-uniform">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary float-right" id="btnFindClient" data-dismiss="modal">Find</button>
+                                        <div class="form-group row">
+                                            <label for="findClientKeyword" class="col-sm-4 col-form-label">Find
+                                                Keyword</label>
+                                            <div class="col-sm-8">
+                                                <input class="form-control" type="text" id="findClientKeyword">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer modal-footer-uniform">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary float-right" id="btnFindClient"
+                                        data-dismiss="modal">Find
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endif
 
             <!-- Main content -->
             <section class="content">
@@ -52,13 +59,18 @@
                             <div class="box-header no-border">
                                 <h3 class="box-title">Exported Report</h3>
                                 <div class="mailbox-controls px-0 pt-20 pb-0">
-                                    <button type="button" class="btn btn-info btn-sm" id="btnFindClient" data-toggle="modal" data-target="#modalFindClient">Find Client</button>                                </div>
+                                    @if(session('privilege') == 'ROOT')
+                                        <button type="button" class="btn btn-info btn-sm" id="btnFindClient"
+                                                data-toggle="modal" data-target="#modalFindClient">Find Client
+                                        </button></div>
+                                @endif
                             </div>
 
                             <div class="box-body pt-0">
                                 <div class="mailbox-messages bg-white">
                                     <div class="table-responsive">
-                                        <table id="tableReport" class="table table-bordered table-hover display nowrap margin-top-10 w-p100">
+                                        <table id="tableReport"
+                                               class="table table-bordered table-hover display nowrap margin-top-10 w-p100">
                                             <thead>
                                             <tr>
                                                 <th style="text-align: center">Download</th>
@@ -110,37 +122,37 @@
             return $('#findClientKeyword').val()
         }
 
-        $(document).ready( function() {
+        $(document).ready(function () {
             let tableReport = $('#tableReport').DataTable({
                 processing: true,
                 serverSide: true,
                 searching: false,
-                ajax:{
+                ajax: {
                     'type': 'POST',
                     'url': '/tblCSVReport',
-                    'data': function(x) {
+                    'data': function (x) {
                         x._token = '{{ csrf_token() }}'
                         x.searchCategory = getFindField()
                         x.searchKeyword = getFindKeyword()
                     }
                 },
                 columns: [
-                    { data: 'action', name: 'action'},
-                    { data: 'is_generated_2', name: 'is_generated_2'},
-                    { data: 'request_datetime', name: 'request_datetime'},
-                    { data: 'client_id', name: 'client_id'},
-                    { data: 'client_name', name: 'client_name'},
-                    { data: 'username', name: 'username'},
-                    { data: 'start_datetime', name: 'start_datetime'},
-                    { data: 'end_datetime', name: 'end_datetime'},
-                    { data: 'search_parameter', name: 'search_parameter'}
+                    {data: 'action', name: 'action'},
+                    {data: 'is_generated_2', name: 'is_generated_2'},
+                    {data: 'request_datetime', name: 'request_datetime'},
+                    {data: 'client_id', name: 'client_id'},
+                    {data: 'client_name', name: 'client_name'},
+                    {data: 'username', name: 'username'},
+                    {data: 'start_datetime', name: 'start_datetime'},
+                    {data: 'end_datetime', name: 'end_datetime'},
+                    {data: 'search_parameter', name: 'search_parameter'}
                 ],
                 columnDefs: [
-                    { "targets": [0, 1, 2, 3, 6, 7], "className": "text-center"}
+                    {"targets": [0, 1, 2, 3, 6, 7], "className": "text-center"}
                 ]
             })
 
-            $('#btnFindClient').on('click', function() {
+            $('#btnFindClient').on('click', function () {
                 tableReport.ajax.reload()
             })
 

@@ -439,6 +439,7 @@ class TransactionReportController extends Controller
                         ->leftJoin('users as usr', 'rpt.username', '=', 'usr.email')
                         ->leftJoin('client as ccc', 'usr.client_id', '=', 'ccc.client_id')
                         ->where('ccc.is_active', '=', true)
+                        ->where('rpt.username', '=', $request->session()->get('email'))
                         ->where($searchField, $operator, $searchKeyword)
                         ->where('ccc.client_group_id', '=', $clientGroupId)
                         ->select('rpt.request_id', 'rpt.request_datetime', 'rpt.username', 'rpt.start_datetime',
@@ -452,6 +453,7 @@ class TransactionReportController extends Controller
                         ->leftJoin('users as usr', 'rpt.username', '=', 'usr.email')
                         ->leftJoin('client as ccc', 'usr.client_id', '=', 'ccc.client_id')
                         ->where('ccc.is_active', '=', true)
+                        ->where('rpt.username', '=', $request->session()->get('email'))
                         ->where('ccc.client_group_id', '=', $clientGroupId)
                         ->select('rpt.request_id', 'rpt.request_datetime', 'rpt.username', 'rpt.start_datetime',
                             'rpt.end_datetime', 'rpt.client_id', 'ccc.client_name', 'rpt.search_keyword', 'rpt.search_parameter',

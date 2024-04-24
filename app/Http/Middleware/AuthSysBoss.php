@@ -19,8 +19,10 @@ class AuthSysBoss
     public function handle(Request $request, Closure $next)
     {
         if (isset(AUTH::user()->privilege) && ((AUTH::user()->privilege == 'ROOT') || (AUTH::user()->privilege == 'SYSADMIN') || (AUTH::user()->privilege == 'SYSFINANCE') || (AUTH::user()->privilege == 'SYSOP') || (AUTH::user()->privilege == 'B2B_USER') || (AUTH::user()->privilege == 'B2B_RESELLER'))) {
+//            error_log('AuthSysBoss: ' . AUTH::user()->privilege);
             return $next($request);
         } else {
+//            error_log('AuthSysBoss: ' . AUTH::user()->privilege);
             Auth::logout();
             return redirect('/login');
         }
