@@ -478,8 +478,8 @@ class TransactionReportController extends Controller
                 ->addColumn('action', function ($row) {
                     if ($row->is_generated_2 === true) {
                         //$url = "https://dl-report.artamaya.com:9903/report/".$row->file_path_2;
-                        //$url =  url("/storage/reports") . "/" . $row->file_path_2;
-                        $url = "https://smseller.krapoex.com/storage/reports/" . $row->file_path_2;
+                        $url =  url("/storage/reports") . "/" . $row->file_path_2;
+//                        $url = "https://smseller.krapoex.com/storage/reports/" . $row->file_path_2;
                         $btn = '<a href="' . $url . '" class="edit btn btn-success btn-sm" data-toggle="_blank">Download</a>';
                     } else {
                         $btn = '';
